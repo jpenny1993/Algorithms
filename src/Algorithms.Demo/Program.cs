@@ -24,6 +24,7 @@ namespace Algorithms.Demo
 
             RecordSortTime("QuickSort", new QuickSorter<int>(), numbers);
 
+            RecordSortTime("BubbleSort", new BubbleSorter<int>(), numbers);
 
             WriteResults();
         }
@@ -44,7 +45,7 @@ namespace Algorithms.Demo
                 sorter.Sort(ref array);
                 timer.Stop();
 
-                Console.WriteLine("Time Taken: {0}ms", timer.Elapsed.TotalMilliseconds);
+                Console.WriteLine("Time Taken: {0}", GetTime(timer.Elapsed));
 
                 var sample = array.Skip(100).Take(10);
                 Console.WriteLine("Sample Results: {0}", string.Join(", ", sample));
@@ -86,7 +87,7 @@ namespace Algorithms.Demo
 
                 if (!results.Any()) 
                 {
-                    Console.WriteLine("{0} - Successful Attempts: 0\r\n", key);
+                    Console.WriteLine("{0} - Successful: 0\r\n", key);
                     continue;
                 }
 
@@ -98,16 +99,27 @@ namespace Algorithms.Demo
                 // Attempts faster than the average
                 var aboveAvergageCount = results.Where(x => x < averageTime).Count();
 
-                var template = "{0} - Successful Attempts: {1}, Faster than Avg: {2}, Avg: {3}ms, Fastest: {4}ms, Slowest: {5}ms\r\n";
+                var template = "{0} - Successful: {1}, > Avg: {2}, Avg: {3}, Fastest: {4}, Slowest: {5}\r\n";
                 Console.WriteLine(template, key,
                     results.Count,
                     aboveAvergageCount,
-                    averageTime.TotalMilliseconds, 
-                    fastestTime.TotalMilliseconds, 
-                    slowestTime.TotalMilliseconds);
+                    GetTime(averageTime),
+                    GetTime(fastestTime), 
+                    GetTime(slowestTime)
+                );
 
             }
             Console.WriteLine(" ------------ ");
+        }
+
+        private static string GetTime(TimeSpan time) 
+        {
+            if (time.Seconds > 0)
+            {
+                return $"{time.TotalSeconds : 0.000} secs";
+            }
+
+            return $"{time.TotalMilliseconds} ms";
         }
     }
 }
