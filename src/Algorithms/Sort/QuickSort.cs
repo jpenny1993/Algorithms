@@ -13,9 +13,9 @@ namespace Algorithms.Sort
             return collection;
         }
 
-        public void Sort(ref IList<T> source) => Sort(ref source, 0, source.Count - 1);
+        public void Sort(ref IList<T> source) => QuickSort(ref source, 0, source.Count - 1);
 
-        private void Sort(ref IList<T> source, int low, int high)
+        private void QuickSort(ref IList<T> source, int low, int high)
         {
             if (low < high)
             {
@@ -23,10 +23,10 @@ namespace Algorithms.Sort
                 var pivotIndex = Partition(ref source, low, high);
 
                 // Sort the elements to the left of the pivot
-                Sort(ref source, low, pivotIndex - 1);
+                QuickSort(ref source, low, pivotIndex - 1);
                 
                 // Sort the elements to the right of the pivot
-                Sort(ref source, pivotIndex + 1, high);
+                QuickSort(ref source, pivotIndex + 1, high);
             }
         }
 
