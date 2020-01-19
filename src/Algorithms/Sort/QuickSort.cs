@@ -9,7 +9,6 @@ namespace Algorithms.Sort
 
         public void SortDescending(ref IList<T> source) => QuickSort(ref source, 0, source.Count - 1, -1);
 
-        // TODO: Implement Direction
         private static void QuickSort(ref IList<T> source, int low, int high, int direction)
         {
             if (low < high)

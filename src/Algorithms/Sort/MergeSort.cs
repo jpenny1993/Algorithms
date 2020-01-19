@@ -27,7 +27,6 @@ namespace Algorithms.Sort
             MergeSort(ref source, 0, source.Count - 1, -1);
         }
 
-        // TODO: Implement Direction
         private static void MergeSort(ref IList<T> source, int left, int right, int direction)
         {
             int mid;

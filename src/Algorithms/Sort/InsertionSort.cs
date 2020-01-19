@@ -9,7 +9,6 @@ namespace Algorithms.Sort
 
         public void SortDescending(ref IList<T> source) => InsertionSort(ref source, -1);
 
-        // TODO: Implement Direction
         public static void InsertionSort(ref IList<T> source, int direction) 
         {
             T element;

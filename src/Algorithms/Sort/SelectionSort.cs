@@ -9,7 +9,6 @@ namespace Algorithms.Sort
 
         public void SortDescending(ref IList<T> source) => SelectionSort(ref source, source.Count, -1);
 
-        // TODO: Implement Direction
         public static void SelectionSort(ref IList<T> source, int length, int direction) 
         {
             T temp;
