@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Algorithms
 {
-    public interface ISorter<T> where T : struct, IComparable<T>
+    public interface ISorter<T> where T : IComparable<T>
     {
         /// <summary>
         /// Sorts the referenced collection.

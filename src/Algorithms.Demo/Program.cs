@@ -36,6 +36,9 @@ namespace Algorithms.Demo
             if (AskAction("InsertionSort"))
                 RecordSortTime("InsertionSort", new InsertionSorter<int>(), iterations, numbers);
 
+            if (AskAction("SelectionSort"))
+                RecordSortTime("SelectionSort", new SelectionSorter<int>(), iterations, numbers);
+
             if (AskAction("BubbleSort"))
                 RecordSortTime("BubbleSort", new BubbleSorter<int>(), iterations, numbers);
 

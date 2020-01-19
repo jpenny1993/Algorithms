@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Algorithms.Sort
 {
-    public class InsertionSorter<T> : ISorter<T> where T : struct, IComparable<T>
+    public class InsertionSorter<T> : ISorter<T> where T : IComparable<T>
     {
         public IList<T> Sort(IEnumerable<T> source)
         {
