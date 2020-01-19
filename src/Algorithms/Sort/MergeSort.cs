@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Algorithms.Sort
 {
     public class MergeSorter<T> : ISorter<T> where T : IComparable<T>
     {
-        public IList<T> Sort(IEnumerable<T> source)
-        {
-            IList<T> collection = source.ToArray();
-            Sort(ref collection);
-            return collection;
-        }
-
-        public void Sort(ref IList<T> source) 
+        public void SortAscending(ref IList<T> source) 
         {
             if (source.Count % 2 != 0) 
             {
@@ -21,10 +13,22 @@ namespace Algorithms.Sort
                 throw new OverflowException("Size of the collection is not power of 2.");
             }
 
-            MergeSort(ref source, 0, source.Count - 1);
+            MergeSort(ref source, 0, source.Count - 1, 1);
         }
 
-        private static void MergeSort(ref IList<T> source, int left, int right)
+        public void SortDescending(ref IList<T> source)
+        {
+            if (source.Count % 2 != 0)
+            {
+                // Must be able to split the collection into exactly 2 parts
+                throw new OverflowException("Size of the collection is not power of 2.");
+            }
+
+            MergeSort(ref source, 0, source.Count - 1, -1);
+        }
+
+        // TODO: Implement Direction
+        private static void MergeSort(ref IList<T> source, int left, int right, int direction)
         {
             int mid;
             if (right > left)
@@ -33,17 +37,17 @@ namespace Algorithms.Sort
                 mid = (right + left) / 2;
 
                 // Sort the first half & recurse
-                MergeSort(ref source, left, mid);
+                MergeSort(ref source, left, mid, direction);
 
                 // Sort the second half & recurse
-                MergeSort(ref source, (mid + 1), right);
+                MergeSort(ref source, (mid + 1), right, direction);
 
                 // Join the two lists back into one
-                Merge(ref source, left, (mid + 1), right);
+                Merge(ref source, left, (mid + 1), right, direction);
             }
         }
 
-        private static void Merge(ref IList<T> source, int left, int mid, int right)
+        private static void Merge(ref IList<T> source, int left, int mid, int right, int direction)
         {
             var temp = new T[source.Count];
             int i, eol, num, pos;
@@ -54,7 +58,7 @@ namespace Algorithms.Sort
             // Copy from either the left or right half to the temp collection
             while ((left <= eol) && (mid <= right))
             {
-                if (source[left].CompareTo(source[mid]) <= 0)
+                if (source[mid].CompareTo(source[left]) == direction)
                 {
                     temp[pos++] = source[left++];
                 }

@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Algorithms.Sort
 {
     public class SelectionSorter<T> : ISorter<T> where T : IComparable<T>
     {
-        public IList<T> Sort(IEnumerable<T> source)
-        {
-            IList<T> collection = source.ToArray();
-            Sort(ref collection);
-            return collection;
-        }
+        public void SortAscending(ref IList<T> source) => SelectionSort(ref source, source.Count, 1);
 
-        public void Sort(ref IList<T> source) => SelectionSort(ref source, source.Count);
+        public void SortDescending(ref IList<T> source) => SelectionSort(ref source, source.Count, -1);
 
-        public void SelectionSort(ref IList<T> source, int length) 
+        // TODO: Implement Direction
+        public static void SelectionSort(ref IList<T> source, int length, int direction) 
         {
             T temp;
             int minIndex;
@@ -28,7 +23,7 @@ namespace Algorithms.Sort
                 // Find the smallest element in the unsorted portion of the array.
                 for (var sortIndex = index; sortIndex < length; sortIndex++)
                 {
-                    if (source[minIndex].CompareTo(source[sortIndex]) > 0) 
+                    if (source[minIndex].CompareTo(source[sortIndex]) == direction) 
                     {
                         minIndex = sortIndex;
                     }

@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Algorithms.Sort
 {
     public class InsertionSorter<T> : ISorter<T> where T : IComparable<T>
     {
-        public IList<T> Sort(IEnumerable<T> source)
-        {
-            IList<T> collection = source.ToArray();
-            Sort(ref collection);
-            return collection;
-        }
+        public void SortAscending(ref IList<T> source) => InsertionSort(ref source, 1);
 
-        public void Sort(ref IList<T> source) => InsertionSort(ref source);
+        public void SortDescending(ref IList<T> source) => InsertionSort(ref source, -1);
 
-        public void InsertionSort(ref IList<T> source) 
+        // TODO: Implement Direction
+        public static void InsertionSort(ref IList<T> source, int direction) 
         {
             T element;
             int j;
@@ -27,7 +22,7 @@ namespace Algorithms.Sort
                 j = x - 1;
 
                 // Move all larger elements past the current element
-                while (j >= 0 && source[j].CompareTo(element) > 0)
+                while (j >= 0 && source[j].CompareTo(element) == direction)
                 {
                     source[j + 1] = source[j];
                     j--;

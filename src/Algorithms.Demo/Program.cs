@@ -28,25 +28,25 @@ namespace Algorithms.Demo
             var numbers = (new int[testSize]).Select(x => random.Next(minValue, maxValue)).ToArray();
 
             if (AskAction("Linq OrderBy"))
-                RecordSortTime("Linq", new LinqSorter<int>(), iterations, numbers);
+                RecordSortTime("Linq OrderBy", new LinqSorter<int>(), iterations, numbers);
 
-            if (AskAction("QuickSort"))
-                RecordSortTime("QuickSort", new QuickSorter<int>(), iterations, numbers);
+            if (AskAction("Quick Sort"))
+                RecordSortTime("Quick Sort", new QuickSorter<int>(), iterations, numbers);
 
-            if (AskAction("HeapSort"))
-                RecordSortTime("HeapSort", new HeapSorter<int>(), iterations, numbers);
+            if (AskAction("Heap Sort"))
+                RecordSortTime("Heap Sort", new HeapSorter<int>(), iterations, numbers);
 
-            if (AskAction("InsertionSort"))
-                RecordSortTime("InsertionSort", new InsertionSorter<int>(), iterations, numbers);
+            if (AskAction("Merge Sort"))
+                RecordSortTime("Merge Sort", new MergeSorter<int>(), iterations, numbers);
 
-            if (AskAction("MergeSort"))
-                RecordSortTime("MergeSort", new MergeSorter<int>(), iterations, numbers);
+            if (AskAction("Insertion Sort"))
+                RecordSortTime("Insertion Sort", new InsertionSorter<int>(), iterations, numbers);
 
-            if (AskAction("SelectionSort"))
-                RecordSortTime("SelectionSort", new SelectionSorter<int>(), iterations, numbers);
+            if (AskAction("Selection Sort"))
+                RecordSortTime("Selection Sort", new SelectionSorter<int>(), iterations, numbers);
 
-            if (AskAction("BubbleSort"))
-                RecordSortTime("BubbleSort", new BubbleSorter<int>(), iterations, numbers);
+            if (AskAction("Bubble Sort"))
+                RecordSortTime("Bubble Sort", new BubbleSorter<int>(), iterations, numbers);
 
             WriteResults();
 
@@ -104,9 +104,20 @@ namespace Algorithms.Demo
 
                 Console.WriteLine("Starting timer...");
                 var timer = new Stopwatch();
-                timer.Start();
-                sorter.Sort(ref array);
-                timer.Stop();
+
+                var testSortAscending = i % 2 == 0;
+                if (testSortAscending)
+                {
+                    timer.Start();
+                    sorter.SortAscending(ref array);
+                    timer.Stop();
+                }
+                else 
+                {
+                    timer.Start();
+                    sorter.SortDescending(ref array);
+                    timer.Stop();
+                }
 
                 Console.WriteLine("Time Taken: {0}", GetTime(timer.Elapsed));
 
@@ -116,12 +127,16 @@ namespace Algorithms.Demo
                 var sortSuccess = true;
                 for (var j = 1; j < array.Count; j++) 
                 {
-                    if (array[j -1] > array[j]) 
+                    if (testSortAscending && array[j - 1] > array[j])
                     {
                         sortSuccess = false;
                         break;
                     }
-
+                    else if (!testSortAscending && array[j - 1] < array[j])
+                    {
+                        sortSuccess = false;
+                        break;
+                    }
                 }
 
                 if (sortSuccess)
@@ -167,12 +182,13 @@ namespace Algorithms.Demo
                 // Attempts faster than the average
                 var aboveAvergageCount = results.Where(x => x < averageTime).Count();
 
-                var template = " {0, -13} \t Avg: {1}, Fastest: {2}, Slowest: {3}, {4} attempts faster than avg.\r\n";
+                var template = " {0, -13} \t Avg: {1}, Fastest: {2}, Slowest: {3}, {4}/{5} attempts faster than avg.\r\n";
                 Console.WriteLine(template, key,
                     GetTime(averageTime),
                     GetTime(fastestTime), 
                     GetTime(slowestTime),
-                    aboveAvergageCount
+                    aboveAvergageCount,
+                    results.Count
                 );
 
             }

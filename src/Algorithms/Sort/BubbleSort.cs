@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Algorithms.Sort
 {
     public class BubbleSorter<T> : ISorter<T> where T : IComparable<T>
     {
-        public IList<T> Sort(IEnumerable<T> source)
-        {
-            IList<T> collection = source.ToArray();
-            Sort(ref collection);
-            return collection;
-        }
+        public void SortAscending(ref IList<T> source) => BubbleSort(ref source, source.Count, 1);
 
-        public void Sort(ref IList<T> source) => BubbleSort(ref source, source.Count);
+        public void SortDescending(ref IList<T> source) => BubbleSort(ref source, source.Count, -1);
 
-        public void BubbleSort(ref IList<T> source, int length) 
+        private static void BubbleSort(ref IList<T> source, int length, int direction) 
         {
             T temp;
             int sortIndex, sortSize = length - 1, lastSortedIndex = 0;
@@ -27,7 +21,7 @@ namespace Algorithms.Sort
                 for (sortIndex = 0; sortIndex < sortSize; sortIndex++)
                 {
                     // If the elements are not in order
-                    if (source[sortIndex].CompareTo(source[sortIndex + 1]) > 0)
+                    if (source[sortIndex].CompareTo(source[sortIndex + 1]) == direction)
                     {
                         // Swap the two elements
                         temp = source[sortIndex];
