@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms", "src\Algorithms\Algorithms.csproj", "{832DADFC-E386-4D6A-A46D-3F01E8F657E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms.Demo", "src\Algorithms.Demo\Algorithms.Demo.csproj", "{A80BF191-89CC-4C4C-8B6D-6E87AE939219}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms.Demo", "src\Algorithms.Demo\Algorithms.Demo.csproj", "{A80BF191-89CC-4C4C-8B6D-6E87AE939219}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{33D55831-D839-4192-B8DD-39BA28B7C5E6}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
