@@ -45,6 +45,6 @@ System.Linq.OrderBy() vs my implementation of Quick Sort.
 | Algorithm only          | 615.4799 ms | 545.2327 ms | 1.050 secs |
 
 ### Conclusion
-99% of the time you should be using linq to entities to do your sorting.
-If you happen to have a very large dataset and need to save up to 100ms of time then use a sort algorithm to do it.
-Further more if you do need use a sort algorithm then it should be done in a more efficient language than C#, either C or C++.
+You should be using linq to objects provided by microsoft to do your sorting.
+After spending time writing all of these algorithms myself I had a look into what algorithm OrderBy uses. 
+As it turns out OrderBy implements quick sort, so there are no real performance benefits from implementing a sort algorithm myself.
