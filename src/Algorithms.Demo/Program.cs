@@ -33,6 +33,9 @@ namespace Algorithms.Demo
             if (AskAction("QuickSort"))
                 RecordSortTime("QuickSort", new QuickSorter<int>(), iterations, numbers);
 
+            if (AskAction("HeapSort"))
+                RecordSortTime("HeapSort", new HeapSorter<int>(), iterations, numbers);
+
             if (AskAction("InsertionSort"))
                 RecordSortTime("InsertionSort", new InsertionSorter<int>(), iterations, numbers);
 
