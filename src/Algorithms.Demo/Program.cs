@@ -207,22 +207,16 @@ namespace Algorithms.Demo
 
         private static void TestSearchAlgorithms()
         {
-            var testSample = GenerateTestSample(_testSize, _minValue, _maxValue);
+            var sortedTestSample = GenerateTestSample(_testSize, _minValue, _maxValue).OrderBy(x => x);
 
             if (AskAction("Linear Search"))
-                RecordSearchTime("Linear Search", new LinearSearcher<int>(), testSample);
+                RecordSearchTime("Linear Search", new LinearSearcher<int>(), sortedTestSample);
 
             if (AskAction("Binary Search"))
-            {
-                var orderedNumbers = testSample.OrderBy(x => x);
-                RecordSearchTime("Binary Search", new BinarySearcher<int>(), orderedNumbers);
-            }
+                RecordSearchTime("Binary Search", new BinarySearcher<int>(), sortedTestSample);
 
             if (AskAction("Ternary Search"))
-            {
-                var orderedNumbers = testSample.OrderBy(x => x);
-                RecordSearchTime("Ternary Search", new TernarySearcher<int>(), orderedNumbers);
-            }
+                RecordSearchTime("Ternary Search", new TernarySearcher<int>(), sortedTestSample);
 
             WriteResults();
         }
