@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using Algorithms.Demo.Search;
 using Algorithms.Demo.Sort;
 using Algorithms.Search;
 using Algorithms.Sort;
@@ -208,6 +209,9 @@ namespace Algorithms.Demo
         private static void TestSearchAlgorithms()
         {
             var sortedTestSample = GenerateTestSample(_testSize, _minValue, _maxValue).OrderBy(x => x);
+
+            if (AskAction("Collection.IndexOf"))
+                RecordSearchTime("Collection.IndexOf", new DefaultSearcher<int>(), sortedTestSample);
 
             if (AskAction("Linear Search"))
                 RecordSearchTime("Linear Search", new LinearSearcher<int>(), sortedTestSample);
