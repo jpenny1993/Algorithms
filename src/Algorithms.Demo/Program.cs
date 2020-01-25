@@ -11,15 +11,21 @@ namespace Algorithms.Demo
 {
     class Program
     {
+        private static int _minValue, _maxValue, _testSize, _iterations;
         private static Random _random;
         private static IDictionary<string, List<TimeSpan>> _dictionary;
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting Up!\r\n");
-
             _dictionary = new Dictionary<string, List<TimeSpan>>();
             _random = new Random();
+
+            Console.WriteLine("Setup Tests!\r\n");
+            _minValue = ReadIntAbs("Min value", 0);
+            _maxValue = ReadIntAbs("Max value", 10000, _minValue);
+            _testSize = ReadIntAbs("Array size", 10000, 10);
+            _iterations = ReadIntAbs("Iterations per test", 50, 1);
+            Console.WriteLine();
 
             if (AskAction("Test Search Algorithms"))
                 TestSearchAlgorithms();
@@ -76,13 +82,13 @@ namespace Algorithms.Demo
             return $"{time.TotalMilliseconds} ms";
         }
 
-        private static void RecordSearchTime(string key, ISearcher<int> searcher, int iterations, IEnumerable<int> enumerable)
+        private static void RecordSearchTime(string key, ISearcher<int> searcher, IEnumerable<int> enumerable)
         {
             var hasKey = _dictionary.ContainsKey(key);
             var results = hasKey ? _dictionary[key] : new List<TimeSpan>();
 
             IList<int> array = enumerable.ToArray();
-            for (var i = 1; i < iterations + 1; i++)
+            for (var i = 1; i < _iterations + 1; i++)
             {
                 Console.WriteLine("Begin Test: {0} v{1}", key, i);
 
@@ -135,12 +141,12 @@ namespace Algorithms.Demo
                 _dictionary.Add(key, results);
         }
 
-        private static void RecordSortTime(string key, ISorter<int> sorter, int iterations, IEnumerable<int> enumerable)
+        private static void RecordSortTime(string key, ISorter<int> sorter, IEnumerable<int> enumerable)
         {
             var hasKey = _dictionary.ContainsKey(key);
             var results = hasKey ? _dictionary[key] : new List<TimeSpan>();
 
-            for (var i = 1; i < iterations + 1; i++) 
+            for (var i = 1; i < _iterations + 1; i++) 
             {
                 Console.WriteLine("Begin Test: {0} v{1}", key, i);
                 IList<int> array = enumerable.ToArray();
@@ -201,57 +207,50 @@ namespace Algorithms.Demo
 
         private static void TestSearchAlgorithms()
         {
-            int minValue = ReadIntAbs("Min value", 0);
-            int maxValue = ReadIntAbs("Max value", 10000, minValue);
-            int testSize = ReadIntAbs("Array size", 10000, 10);
-            int iterations = ReadIntAbs("Iterations per test", 50, 1);
-            Console.WriteLine();
-
-            var numbers = GenerateTestSample(testSize, minValue, maxValue);
+            var testSample = GenerateTestSample(_testSize, _minValue, _maxValue);
 
             if (AskAction("Linear Search"))
-                RecordSearchTime("Linear Search", new LinearSearcher<int>(), iterations, numbers);
+                RecordSearchTime("Linear Search", new LinearSearcher<int>(), testSample);
 
             if (AskAction("Binary Search"))
             {
-                var orderedNumbers = numbers.OrderBy(x => x);
-                RecordSearchTime("Binary Search", new BinarySearcher<int>(), iterations, orderedNumbers);
+                var orderedNumbers = testSample.OrderBy(x => x);
+                RecordSearchTime("Binary Search", new BinarySearcher<int>(), orderedNumbers);
             }
 
+            if (AskAction("Ternary Search"))
+            {
+                var orderedNumbers = testSample.OrderBy(x => x);
+                RecordSearchTime("Ternary Search", new TernarySearcher<int>(), orderedNumbers);
+            }
 
             WriteResults();
         }
 
         private static void TestSortAlgorithms()
         {
-            int minValue = ReadIntAbs("Min value", 0);
-            int maxValue = ReadIntAbs("Max value", 10000, minValue);
-            int testSize = ReadIntAbs("Array size", 10000, 10);
-            int iterations = ReadIntAbs("Iterations per test", 50, 1);
-            Console.WriteLine();
-
-            var numbers = GenerateTestSample(testSize, minValue, maxValue);
-
+            var testSample = GenerateTestSample(_testSize, _minValue, _maxValue);
+            
             if (AskAction("Linq OrderBy"))
-                RecordSortTime("Linq OrderBy", new LinqSorter<int>(), iterations, numbers);
+                RecordSortTime("Linq OrderBy", new LinqSorter<int>(), testSample);
 
             if (AskAction("Quick Sort"))
-                RecordSortTime("Quick Sort", new QuickSorter<int>(), iterations, numbers);
+                RecordSortTime("Quick Sort", new QuickSorter<int>(), testSample);
 
             if (AskAction("Heap Sort"))
-                RecordSortTime("Heap Sort", new HeapSorter<int>(), iterations, numbers);
+                RecordSortTime("Heap Sort", new HeapSorter<int>(), testSample);
 
             if (AskAction("Merge Sort"))
-                RecordSortTime("Merge Sort", new MergeSorter<int>(), iterations, numbers);
+                RecordSortTime("Merge Sort", new MergeSorter<int>(), testSample);
 
             if (AskAction("Insertion Sort"))
-                RecordSortTime("Insertion Sort", new InsertionSorter<int>(), iterations, numbers);
+                RecordSortTime("Insertion Sort", new InsertionSorter<int>(), testSample);
 
             if (AskAction("Selection Sort"))
-                RecordSortTime("Selection Sort", new SelectionSorter<int>(), iterations, numbers);
+                RecordSortTime("Selection Sort", new SelectionSorter<int>(), testSample);
 
             if (AskAction("Bubble Sort"))
-                RecordSortTime("Bubble Sort", new BubbleSorter<int>(), iterations, numbers);
+                RecordSortTime("Bubble Sort", new BubbleSorter<int>(), testSample);
 
             WriteResults();
         }
@@ -270,7 +269,7 @@ namespace Algorithms.Demo
 
                 if (!results.Any()) 
                 {
-                    Console.WriteLine(" {0, -13} \t was not succesful.\r\n", key);
+                    Console.WriteLine(" {0, -15} - was not succesful.\r\n", key);
                     continue;
                 }
 
@@ -282,7 +281,7 @@ namespace Algorithms.Demo
                 // Attempts faster than the average
                 var aboveAvergageCount = results.Where(x => x < averageTime).Count();
 
-                var template = " {0, -13} \t Avg: {1}, Fastest: {2}, Slowest: {3}, {4}/{5} attempts faster than avg.\r\n";
+                var template = " {0, -15} - Avg: {1}, Fastest: {2}, Slowest: {3}, {4}/{5} attempts faster than avg.\r\n";
                 Console.WriteLine(template, key,
                     GetTime(averageTime),
                     GetTime(fastestTime), 
