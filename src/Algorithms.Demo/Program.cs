@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -211,6 +211,13 @@ namespace Algorithms.Demo
 
             if (AskAction("Linear Search"))
                 RecordSearchTime("Linear Search", new LinearSearcher<int>(), iterations, numbers);
+
+            if (AskAction("Binary Search"))
+            {
+                var orderedNumbers = numbers.OrderBy(x => x);
+                RecordSearchTime("Binary Search", new BinarySearcher<int>(), iterations, orderedNumbers);
+            }
+
 
             WriteResults();
         }
