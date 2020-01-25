@@ -59,7 +59,7 @@ namespace Algorithms.Demo
             } while (true);
         }
 
-        private static IList<int> GenerateSample(int size, int min, int max) 
+        private static IList<int> GenerateTestSample(int size, int min, int max) 
         {
             return (new int[size])
                 .Select(x => _random.Next(min, max))
@@ -103,15 +103,48 @@ namespace Algorithms.Demo
                 if (matchIndex > -1)
                 {
                     Console.WriteLine("First Match: {0}/{1}, Value: {2}", matchIndex, array.Count, array[matchIndex]);
-                    results.Add(timer.Elapsed);
-
-                    var matchIndices = searcher.FilterIndices(array, predicate).ToArray();
-                    Console.WriteLine("Total Matches: {0}, All Matches: [{1}]", matchIndices.Length, string.Join(", ", matchIndices));
                 }
                 else 
                 {
                     Console.WriteLine("First Match: Not Found...");
                 }
+
+                // Perform a linear search to find all values
+                var expectedIndicies = new List<int>();
+                var evaluateFunc = predicate.Compile();
+                for (var index = 0; index < array.Count; index++)
+                {
+                    if (evaluateFunc.Invoke(array[index]))
+                    {
+                        expectedIndicies.Add(index);
+                    }
+                }
+
+                var matchIndices = searcher.FilterIndices(array, predicate).OrderBy(x => x).ToArray();
+                Console.WriteLine("Total Matches: {0}, All Matches: [{1}]", matchIndices.Length, string.Join(", ", matchIndices));
+
+                // Check all matching items are found
+                var searchSuccess = expectedIndicies.Count == matchIndices.Length;
+                if (searchSuccess)
+                    for (var j = 0; j < expectedIndicies.Count; j++)
+                    {
+                        if (expectedIndicies[j] != matchIndices[j])
+                        {
+                            searchSuccess = false;
+                            break;
+                        }
+                    }
+
+                if (searchSuccess)
+                {
+                    Console.WriteLine("Valid Search: Yes");
+                    results.Add(timer.Elapsed);
+                }
+                else
+                {
+                    Console.WriteLine("Valid Search: No");
+                }
+
 
                 Console.WriteLine("End Test: {0} v{1}\r\n", key, i);
             }
@@ -192,15 +225,12 @@ namespace Algorithms.Demo
             int iterations = ReadIntAbs("Iterations per test", 50, 1);
             Console.WriteLine();
 
-            // Create a random test sample
-            var numbers = GenerateSample(testSize, minValue, maxValue);
+            var numbers = GenerateTestSample(testSize, minValue, maxValue);
 
             if (AskAction("Linear Search"))
                 RecordSearchTime("Linear Search", new LinearSearcher<int>(), iterations, numbers);
 
             WriteResults();
-
-            _dictionary.Clear();
         }
 
         private static void TestSortAlgorithms()
@@ -211,8 +241,7 @@ namespace Algorithms.Demo
             int iterations = ReadIntAbs("Iterations per test", 50, 1);
             Console.WriteLine();
 
-            // Create a random test sample
-            var numbers = GenerateSample(testSize, minValue, maxValue);
+            var numbers = GenerateTestSample(testSize, minValue, maxValue);
 
             if (AskAction("Linq OrderBy"))
                 RecordSortTime("Linq OrderBy", new LinqSorter<int>(), iterations, numbers);
@@ -236,8 +265,6 @@ namespace Algorithms.Demo
                 RecordSortTime("Bubble Sort", new BubbleSorter<int>(), iterations, numbers);
 
             WriteResults();
-
-            _dictionary.Clear();
         }
 
         private static void WriteResults()
@@ -276,7 +303,9 @@ namespace Algorithms.Demo
                 );
 
             }
+
             Console.WriteLine(" ------------ \r\n");
+            _dictionary.Clear();
         }
     }
 }
