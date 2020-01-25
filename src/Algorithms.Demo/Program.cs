@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -90,12 +90,11 @@ namespace Algorithms.Demo
                 var target = array[targetIndex];
                 Console.WriteLine("Target: {0}/{1}, Value: {2}", targetIndex, array.Count, target);
 
-                Expression<Func<int, bool>> predicate = x => x == target;
                 Console.WriteLine("Starting timer...");
                 var timer = new Stopwatch();
 
                 timer.Start();
-                var matchIndex = searcher.FindIndex(array, predicate);
+                var matchIndex = searcher.IndexOf(array, target);
                 timer.Stop();
 
                 Console.WriteLine("Time Taken: {0}", GetTime(timer.Elapsed));
@@ -110,32 +109,13 @@ namespace Algorithms.Demo
                 }
 
                 // Perform a linear search to find all values
-                var expectedIndicies = new List<int>();
-                var evaluateFunc = predicate.Compile();
-                for (var index = 0; index < array.Count; index++)
-                {
-                    if (evaluateFunc.Invoke(array[index]))
-                    {
-                        expectedIndicies.Add(index);
-                    }
-                }
+                var expectedIndicies = array
+                    .Select((value, index) => (value, index))
+                    .Where(x => x.value == target)
+                    .Select(x => x.index)
+                    .ToArray();
 
-                var matchIndices = searcher.FilterIndices(array, predicate).OrderBy(x => x).ToArray();
-                Console.WriteLine("Total Matches: {0}, All Matches: [{1}]", matchIndices.Length, string.Join(", ", matchIndices));
-
-                // Check all matching items are found
-                var searchSuccess = expectedIndicies.Count == matchIndices.Length;
-                if (searchSuccess)
-                    for (var j = 0; j < expectedIndicies.Count; j++)
-                    {
-                        if (expectedIndicies[j] != matchIndices[j])
-                        {
-                            searchSuccess = false;
-                            break;
-                        }
-                    }
-
-                if (searchSuccess)
+                if (matchIndex > -1 && expectedIndicies.Contains(matchIndex))
                 {
                     Console.WriteLine("Valid Search: Yes");
                     results.Add(timer.Elapsed);
@@ -144,6 +124,8 @@ namespace Algorithms.Demo
                 {
                     Console.WriteLine("Valid Search: No");
                 }
+
+                Console.WriteLine("Could have been any of: [{0}]", string.Join(", ", expectedIndicies));
 
 
                 Console.WriteLine("End Test: {0} v{1}\r\n", key, i);
