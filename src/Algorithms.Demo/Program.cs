@@ -2,53 +2,30 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using Algorithms.Demo.Sort;
+using Algorithms.Search;
 using Algorithms.Sort;
 
 namespace Algorithms.Demo
 {
     class Program
     {
+        private static Random _random;
         private static IDictionary<string, List<TimeSpan>> _dictionary;
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Test Sort Times!\r\n");
+            Console.WriteLine("Starting Up!\r\n");
 
             _dictionary = new Dictionary<string, List<TimeSpan>>();
-            var random = new Random();
+            _random = new Random();
 
-            int minValue = ReadIntAbs("Min value", 0);
-            int maxValue = ReadIntAbs("Max value", 10000, minValue);
-            int testSize = ReadIntAbs("Array size", 10000, 10);
-            int iterations = ReadIntAbs("Iterations per test", 50, 1);
-            Console.WriteLine();
+            if (AskAction("Test Search Algorithms"))
+                TestSearchAlgorithms();
 
-            // Create a random test sample
-            var numbers = (new int[testSize]).Select(x => random.Next(minValue, maxValue)).ToArray();
-
-            if (AskAction("Linq OrderBy"))
-                RecordSortTime("Linq OrderBy", new LinqSorter<int>(), iterations, numbers);
-
-            if (AskAction("Quick Sort"))
-                RecordSortTime("Quick Sort", new QuickSorter<int>(), iterations, numbers);
-
-            if (AskAction("Heap Sort"))
-                RecordSortTime("Heap Sort", new HeapSorter<int>(), iterations, numbers);
-
-            if (AskAction("Merge Sort"))
-                RecordSortTime("Merge Sort", new MergeSorter<int>(), iterations, numbers);
-
-            if (AskAction("Insertion Sort"))
-                RecordSortTime("Insertion Sort", new InsertionSorter<int>(), iterations, numbers);
-
-            if (AskAction("Selection Sort"))
-                RecordSortTime("Selection Sort", new SelectionSorter<int>(), iterations, numbers);
-
-            if (AskAction("Bubble Sort"))
-                RecordSortTime("Bubble Sort", new BubbleSorter<int>(), iterations, numbers);
-
-            WriteResults();
+            if (AskAction("Test Sort Algorithms"))
+                TestSortAlgorithms();
 
             Console.WriteLine("Press any key to close...");
             Console.ReadKey();
@@ -82,6 +59,13 @@ namespace Algorithms.Demo
             } while (true);
         }
 
+        private static IList<int> GenerateSample(int size, int min, int max) 
+        {
+            return (new int[size])
+                .Select(x => _random.Next(min, max))
+                .ToArray();
+        }
+
         private static string GetTime(TimeSpan time)
         {
             if (time.Seconds > 0)
@@ -92,6 +76,50 @@ namespace Algorithms.Demo
             return $"{time.TotalMilliseconds} ms";
         }
 
+        private static void RecordSearchTime(string key, ISearcher<int> searcher, int iterations, IEnumerable<int> enumerable)
+        {
+            var hasKey = _dictionary.ContainsKey(key);
+            var results = hasKey ? _dictionary[key] : new List<TimeSpan>();
+
+            IList<int> array = enumerable.ToArray();
+            for (var i = 1; i < iterations + 1; i++)
+            {
+                Console.WriteLine("Begin Test: {0} v{1}", key, i);
+
+                var targetIndex = _random.Next(0, array.Count);
+                var target = array[targetIndex];
+                Console.WriteLine("Target: {0}/{1}, Value: {2}", targetIndex, array.Count, target);
+
+                Expression<Func<int, bool>> predicate = x => x == target;
+                Console.WriteLine("Starting timer...");
+                var timer = new Stopwatch();
+
+                timer.Start();
+                var matchIndex = searcher.FindIndex(array, predicate);
+                timer.Stop();
+
+                Console.WriteLine("Time Taken: {0}", GetTime(timer.Elapsed));
+
+                if (matchIndex > -1)
+                {
+                    Console.WriteLine("First Match: {0}/{1}, Value: {2}", matchIndex, array.Count, array[matchIndex]);
+                    results.Add(timer.Elapsed);
+
+                    var matchIndices = searcher.FilterIndices(array, predicate).ToArray();
+                    Console.WriteLine("Total Matches: {0}, All Matches: [{1}]", matchIndices.Length, string.Join(", ", matchIndices));
+                }
+                else 
+                {
+                    Console.WriteLine("First Match: Not Found...");
+                }
+
+                Console.WriteLine("End Test: {0} v{1}\r\n", key, i);
+            }
+
+            if (!hasKey)
+                _dictionary.Add(key, results);
+        }
+
         private static void RecordSortTime(string key, ISorter<int> sorter, int iterations, IEnumerable<int> enumerable)
         {
             var hasKey = _dictionary.ContainsKey(key);
@@ -100,7 +128,7 @@ namespace Algorithms.Demo
             for (var i = 1; i < iterations + 1; i++) 
             {
                 Console.WriteLine("Begin Test: {0} v{1}", key, i);
-                IList<int> array = enumerable.Select(x => x).ToArray();
+                IList<int> array = enumerable.ToArray();
 
                 Console.WriteLine("Starting timer...");
                 var timer = new Stopwatch();
@@ -156,6 +184,62 @@ namespace Algorithms.Demo
                 _dictionary.Add(key, results);
         }
 
+        private static void TestSearchAlgorithms()
+        {
+            int minValue = ReadIntAbs("Min value", 0);
+            int maxValue = ReadIntAbs("Max value", 10000, minValue);
+            int testSize = ReadIntAbs("Array size", 10000, 10);
+            int iterations = ReadIntAbs("Iterations per test", 50, 1);
+            Console.WriteLine();
+
+            // Create a random test sample
+            var numbers = GenerateSample(testSize, minValue, maxValue);
+
+            if (AskAction("Linear Search"))
+                RecordSearchTime("Linear Search", new LinearSearcher<int>(), iterations, numbers);
+
+            WriteResults();
+
+            _dictionary.Clear();
+        }
+
+        private static void TestSortAlgorithms()
+        {
+            int minValue = ReadIntAbs("Min value", 0);
+            int maxValue = ReadIntAbs("Max value", 10000, minValue);
+            int testSize = ReadIntAbs("Array size", 10000, 10);
+            int iterations = ReadIntAbs("Iterations per test", 50, 1);
+            Console.WriteLine();
+
+            // Create a random test sample
+            var numbers = GenerateSample(testSize, minValue, maxValue);
+
+            if (AskAction("Linq OrderBy"))
+                RecordSortTime("Linq OrderBy", new LinqSorter<int>(), iterations, numbers);
+
+            if (AskAction("Quick Sort"))
+                RecordSortTime("Quick Sort", new QuickSorter<int>(), iterations, numbers);
+
+            if (AskAction("Heap Sort"))
+                RecordSortTime("Heap Sort", new HeapSorter<int>(), iterations, numbers);
+
+            if (AskAction("Merge Sort"))
+                RecordSortTime("Merge Sort", new MergeSorter<int>(), iterations, numbers);
+
+            if (AskAction("Insertion Sort"))
+                RecordSortTime("Insertion Sort", new InsertionSorter<int>(), iterations, numbers);
+
+            if (AskAction("Selection Sort"))
+                RecordSortTime("Selection Sort", new SelectionSorter<int>(), iterations, numbers);
+
+            if (AskAction("Bubble Sort"))
+                RecordSortTime("Bubble Sort", new BubbleSorter<int>(), iterations, numbers);
+
+            WriteResults();
+
+            _dictionary.Clear();
+        }
+
         private static void WriteResults()
         {
             if (!_dictionary.Keys.Any())
@@ -170,7 +254,7 @@ namespace Algorithms.Demo
 
                 if (!results.Any()) 
                 {
-                    Console.WriteLine(" {0, -13} \t Sort was not succesful.\r\n", key);
+                    Console.WriteLine(" {0, -13} \t was not succesful.\r\n", key);
                     continue;
                 }
 
