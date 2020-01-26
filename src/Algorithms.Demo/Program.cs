@@ -228,6 +228,9 @@ namespace Algorithms.Demo
             if (AskAction("Interpolation Search"))
                 RecordSearchTime("Interpolation Search", new InterpolationSearcher(), sortedTestSample);
 
+            if (AskAction("Exponential Search"))
+                RecordSearchTime("Exponential Search", new ExponentialSearcher(), sortedTestSample);
+
             WriteResults();
         }
 

@@ -5,10 +5,11 @@ namespace Algorithms.Search
 {
     public class BinarySearcher<T> : ISearcher<T> where T : IComparable<T>
     {
-        public int IndexOf(IList<T> source, T item)
+        public int IndexOf(IList<T> source, T item) => Search(source, 0, (source.Count - 1), item);
+
+        public int Search(IList<T> source, int left, int right, T item)
         {
-            int right = source.Count - 1;
-            int left = 0, mid;
+            int mid;
             do
             {
                 // Split the collection into 2 regions
@@ -33,7 +34,7 @@ namespace Algorithms.Search
             } while (left <= right);
 
             // Not found
-            return -1;        
+            return -1;
         }
     }
 }
