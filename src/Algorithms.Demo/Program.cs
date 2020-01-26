@@ -80,7 +80,7 @@ namespace Algorithms.Demo
                 return $"{time.TotalSeconds: 0.000} secs";
             }
 
-            return $"{time.TotalMilliseconds} ms";
+            return $"{time.TotalMilliseconds: 0.0000} ms";
         }
 
         private static void RecordSearchTime(string key, ISearcher<int> searcher, IEnumerable<int> enumerable)
@@ -221,6 +221,9 @@ namespace Algorithms.Demo
 
             if (AskAction("Ternary Search"))
                 RecordSearchTime("Ternary Search", new TernarySearcher<int>(), sortedTestSample);
+
+            if (AskAction("Jump Search"))
+                RecordSearchTime("Jump Search", new JumpSearcher<int>(), sortedTestSample);
 
             WriteResults();
         }
