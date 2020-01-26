@@ -225,6 +225,9 @@ namespace Algorithms.Demo
             if (AskAction("Jump Search"))
                 RecordSearchTime("Jump Search", new JumpSearcher<int>(), sortedTestSample);
 
+            if (AskAction("Interpolation Search"))
+                RecordSearchTime("Interpolation Search", new InterpolationSearcher(), sortedTestSample);
+
             WriteResults();
         }
 
