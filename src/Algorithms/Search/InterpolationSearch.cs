@@ -24,7 +24,7 @@ namespace Algorithms.Search
                 }
 
                 // Suggest the item position based on the items at the edges of the array
-                int pos = low + (((high - low) / (source[high] - source[low])) * (item - source[low]));
+                int pos = low + (((high - low) / (source[high] - source[low] + 1)) * (item - source[low]));
 
                 // Item found
                 if (source[pos] == item)
